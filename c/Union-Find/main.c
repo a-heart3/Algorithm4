@@ -6,6 +6,7 @@
 
 int *UF;																				// Define global variable UF
 int N;																					// Define global variable UF length
+int *size;
 bool UF_connected (int p, int q);								// Declare the connected function
 void UF_union (int p, int q);										// Declare the union function
 int  UF_count ();												// Count how many components
@@ -16,6 +17,7 @@ void initial_UF()
 	int i = 0;
 	for(i; i<N; i++) {
 		UF[i] = i;
+		size[i] = 1;
 	}
 }
 
@@ -25,14 +27,17 @@ int main(int argc, char *argv[])
 		assert(argc >= 2);
 		fd = fopen(argv[1], "r");										// Use first arguments as open file path
 		char line[100];
+		int i = 0;
 		fgets(line, 100 ,fd);												// Read number of sites, in c, line store string
 		N = atoi(line);															// Use atoi to transfer string to an integer	
 		UF = (int *) calloc (N, sizeof(int));				// Create an array dynamically
+		size = (int *) calloc (N, sizeof(int));			// Create an size array
 		initial_UF();																// Initialize N components
 		while (fgets(line, 100, fd) != NULL) {
+			printf("This is %d items\n", i++);
 			int p = atoi(strtok(line, " "));				
 			int q = atoi(strtok(NULL, " "));					// Read pair to connect
-			if (UF_connected(p,q)) continue;					// Ignore if connected
+			if (UF_connected(p,q)) 	continue;					// Ignore if connected
 			UF_union(p,q);														// Combine components
 			printf("%d %d\n", p, q);									// and print connection
 		}
