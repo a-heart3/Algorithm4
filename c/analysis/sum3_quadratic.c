@@ -4,16 +4,16 @@
 
 extern int *numbers;
 extern int N;
-
+/*
 static void print()
 {
-	/* Print array numbers */
 	int i = 0;
 	for (i; i<N; i++) {
 		printf("%d ", numbers[i]);
 	}
 	printf("\n");
 }
+*/
 
 int partition(int low, int high) {
 	/* find the pivot position */
@@ -39,36 +39,45 @@ static void quick_sort(int low, int high)
 	}
 }
 
-static bool binary_search(int low, int high, int target)
-	/* binary_search: judge one data whether in the array */
-{
-	if(low > high) return false;
-	int mid = (low + high) / 2;
-	if(numbers[mid] == target) return true;
-	else if(numbers[mid] > target) return binary_search(low, mid-1, target);
-	else return binary_search(mid+1, high, target);
+static int find_match(int target, int start, int end) {
+	/* Find how many conditions macth numbers[i] + number[j] == -target */
+	int i = start;
+	int j = end;
+	int count = 0;
+	int k = -target;
+	while(i < j) {
+		if (numbers[i] + numbers[j] < k) i++;														 // If sum < k, need plus, so i++
+		else if(numbers[i] + numbers[j] > k) j--;												 // If sum > k, need reduce, so j--
+		else {
+		/* If sum = k
+		 * i++, j-- in the same time
+	   * count++
+		 */
+			printf("%d %d %d\n", target, numbers[i], numbers[j]); 
+			i++;
+			j--;
+			count++;
+		}
+	}
+	return count;
 }
+			
+
+
 
 int sum3()
 {
-	/* First sort the input
-	 * then confirm i, j
-	 * judge target in the array
+	/* First, sort the input
+	 * the confirm i
+	 * then judge -i in thearray
 	 */
 	int i = 0;
-	int j;
-	int target;
-	int count = 0;
+  int  count = 0;
 	quick_sort(0, N-1);																									// First sort
-	for (i; i<N-2; i++) {
-		for (j = i + 1; j<N-1; j++) {
-			target = -(numbers[i] + numbers[j]);														// just judge whether target in the (j+1, N-1) array
-			if (binary_search(j+1, N-1, target)) {
-				printf("%d %d %d\n", numbers[i], numbers[j], target);
-				count++;																											// If existent, then count++
-			}
-		}
+	for (i; i<N-2; i++) {	
+		count += find_match(numbers[i], i+1, N-1);
 	}
 	
+	printf("%d\n", count);
 	return count;
 }
